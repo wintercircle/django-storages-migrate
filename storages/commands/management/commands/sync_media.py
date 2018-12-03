@@ -1,11 +1,13 @@
 # -*- coding: utf-8 -*-
 import os
 import logging
+import sys
 from optparse import make_option
 
+from django.apps import apps
 from django.conf import settings
 from django.db import transaction
-from django.core.management.base import AppCommand
+from django.core.management.base import BaseCommand
 from django.core.files.storage import FileSystemStorage, DefaultStorage
 from django.core.files import File
 
@@ -13,21 +15,38 @@ from django.core.files import File
 logger = logging.getLogger(__name__)
 
 
-class Command(AppCommand):
+class Command(BaseCommand):
     help = 'Migrate media files from local media dir into storage (used only with django-storages)'
-    option_list = AppCommand.option_list + (
-        make_option('-r', '--remove', dest='remove', action='store_true', default=False,
-                    help='Remove local files after migrate'),
-        make_option('-f', '--field', dest='field'),
-        make_option('-m', '--model', dest='model'),
-    )
 
-    def handle_app(self, app, **options):
+    def add_arguments(self, parser):
+        parser.add_argument(
+            '--remove', '-r',
+            help='Remove local files after migrate',
+            dest='remove',
+            action='store_true',
+            default=False,
+        )
+
+        parser.add_argument(
+            '--field', '-f',
+            dest='field'
+        )
+
+        parser.add_argument(
+            '--model', '-m',
+            dest='model'
+        )
+
+        parser.add_argument(
+            'app',
+        )
+
+    def handle(self, *args, **options):
 
         if not options.get('model') or not options.get('field'):
             raise Exception('Specify model and field options')
 
-        model = getattr(app, options.get('model').capitalize())
+        model = apps.get_model(options.get('app'), options.get('model').capitalize())
         field = options.get('field')
         with transaction.atomic():
             for instance in model.objects.filter(**{'%s__gte' % field: 0}):
