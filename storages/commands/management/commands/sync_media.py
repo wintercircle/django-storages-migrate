@@ -58,7 +58,7 @@ class Command(BaseCommand):
                 file_path = FileSystemStorage().path(file_obj.name)
 
                 if os.path.exists(file_path):
-                    _file = File(open(file_path))
+                    _file = File(open(file_path, 'rb'))
                     file_obj.save(os.path.basename(file_path), _file)
 
                     if options.get('remove'):
