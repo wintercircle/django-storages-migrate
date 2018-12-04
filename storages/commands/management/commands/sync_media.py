@@ -33,6 +33,13 @@ class Command(BaseCommand):
         )
 
         parser.add_argument(
+            '--skip-save', '-s',
+            action='store_false',
+            dest='save',
+            default=True
+        )
+
+        parser.add_argument(
             '--model', '-m',
             dest='model'
         )
@@ -61,7 +68,7 @@ class Command(BaseCommand):
                     _file = File(open(file_path, 'rb'))
                     if hasattr(file_obj.instance, 'add_metadata'):
                         file_obj.instance.add_metadata()
-                    file_obj.save(os.path.basename(file_path), _file)
+                    file_obj.save(os.path.basename(file_path), _file, save=options.get('save'))
 
                     if options.get('remove'):
                         os.unlink(file_path)
