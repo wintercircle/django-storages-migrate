@@ -28,6 +28,14 @@ class Command(BaseCommand):
         )
 
         parser.add_argument(
+            '--pk',
+            help='Limit to these ids',
+            dest='ids',
+            action='append',
+            type=int
+        )
+
+        parser.add_argument(
             '--field', '-f',
             dest='field'
         )
@@ -56,7 +64,12 @@ class Command(BaseCommand):
         model = apps.get_model(options.get('app'), options.get('model').capitalize())
         field = options.get('field')
         with transaction.atomic():
-            for instance in model.objects.filter(**{'%s__gte' % field: 0}):
+            query_params = {'%s__gte' % field: 0}
+            objects = model.objects.filter(**query_params)
+            ids = options.get('ids')
+            if len(ids) != 0:
+                objects = objects.filter(pk__in=ids)
+            for instance in objects:
                 file_obj = getattr(instance, field)
 
                 if 'storages.backends' not in settings.DEFAULT_FILE_STORAGE \
