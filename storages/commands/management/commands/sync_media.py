@@ -32,6 +32,7 @@ class Command(BaseCommand):
             help='Limit to these ids',
             dest='ids',
             action='append',
+            default=[],
             type=int
         )
 
