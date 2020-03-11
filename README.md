@@ -10,7 +10,7 @@ INSTALLED_APPS = (
     ...
 
     'storages',
-    'storages.commands',
+    'django_storage_migrate.commands',
 )
 ```
 

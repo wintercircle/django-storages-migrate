@@ -3,7 +3,7 @@ from distutils.core import setup
 setup(
     name='django-storage-migrate',
     version='0.1',
-    packages=['storages.commands', 'storages.commands.management', 'storages.commands.management.commands'],
+    packages=['django_storage_migrate.commands', 'django_storage_migrate.commands.management', 'django_storage_migrate.commands.management.commands'],
     url='https://github.com/Krukov/django-storages-migrate',
     license='MIT',
     author='krukov.dv',
